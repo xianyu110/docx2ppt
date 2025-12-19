@@ -1,8 +1,11 @@
 
 import JSZip from 'jszip';
 
-// 建议用户在生产环境中使用后端代理处理跨域
-const MINERU_TOKEN = "eyJ0eXBlIjoiSldUIiwiYWxnIjoiSFM1MTIifQ.eyJqdGkiOiI4NTAwMDA4NyIsInJvbCI6IlJPTEVfUkVHSVNURVIiLCJpc3MiOiJPcGVuWExhYiIsImlhdCI6MTc2NjEyMTkyMSwiY2xpZW50SWQiOiJsa3pkeDU3bnZ5MjJqa3BxOXgydyIsInBob25lIjoiIiwib3BlbklkIjpudWxsLCJ1dWlkIjoiY2FiNTJlNjItMzMxNy00MGY0LWFmNGYtZjM2NjM3ZDJkMzYzIiwiZW1haWwiOiIiLCJleHAiOjE3NjczMzE1MjF9.cy8R7yvWqD2YY62OrCNGt74Q9VfJZ2t9hCBCcOv75lskbTD7sLOUDFr_5rWwkq1p7-ujbwVGA6TSq4gcFUmDOg";
+/**
+ * Note: In a production SaaS environment, you should set MINERU_TOKEN 
+ * in your Vercel/Deployment environment variables.
+ */
+const MINERU_TOKEN = process.env.MINERU_TOKEN || "eyJ0eXBlIjoiSldUIiwiYWxnIjoiSFM1MTIifQ.eyJqdGkiOiI4NTAwMDA4NyIsInJvbCI6IlJPTEVfUkVHSVNURVIiLCJpc3MiOiJPcGVuWExhYiIsImlhdCI6MTc2NjEyMTkyMSwiY2xpZW50SWQiOiJsa3pkeDU3bnZ5MjJqa3BxOXgydyIsInBob25lIjoiIiwib3BlbklkIjpudWxsLCJ1dWlkIjoiY2FiNTJlNjItMzMxNy00MGY0LWFmNGYtZjM2NjM3ZDJkMzYzIiwiZW1haWwiOiIiLCJleHAiOjE3NjczMzE1MjF9.cy8R7yvWqD2YY62OrCNGt74Q9VfJZ2t9hCBCcOv75lskbTD7sLOUDFr_5rWwkq1p7-ujbwVGA6TSq4gcFUmDOg";
 
 export interface MineruResult {
   markdown: string;
@@ -22,7 +25,7 @@ export class MineruService {
   }
 
   async processFile(file: File): Promise<MineruResult> {
-    // 1. 获取上传链接
+    // 1. Get upload URL
     const batchRes = await this.fetchWithAuth('https://mineru.net/api/v4/file-urls/batch', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -34,35 +37,34 @@ export class MineruService {
 
     if (!batchRes.ok) {
       const errorText = await batchRes.text();
-      throw new Error(`MinerU 认证失败 (HTTP ${batchRes.status}): ${errorText}`);
+      throw new Error(`MinerU Auth Failed (HTTP ${batchRes.status}): ${errorText}`);
     }
 
     const batchData = await batchRes.json();
-    if (batchData.code !== 0) throw new Error(`MinerU 业务错误: ${batchData.msg}`);
+    if (batchData.code !== 0) throw new Error(`MinerU Error: ${batchData.msg}`);
 
     const uploadUrl = batchData.data.file_urls[0];
     const batchId = batchData.data.batch_id;
 
-    // 2. PUT 文件 (上传至云存储，通常不加 Auth Header 以免签名失效)
+    // 2. Upload file via PUT
     console.debug(`[MinerU] Uploading file to storage...`);
     const putRes = await fetch(uploadUrl, { 
       method: 'PUT', 
       body: file,
-      // 某些存储服务需要显式指定 content-type
       headers: { 'Content-Type': file.type } 
     });
     
-    if (!putRes.ok) throw new Error(`文件上传至存储服务器失败 (HTTP ${putRes.status})`);
+    if (!putRes.ok) throw new Error(`Storage upload failed (HTTP ${putRes.status})`);
 
-    // 3. 轮询任务状态
+    // 3. Poll task status
     console.debug(`[MinerU] Task started, ID: ${batchId}. Polling status...`);
     let taskResult: any = null;
     let attempts = 0;
-    const maxAttempts = 60; // 最多等 3 分钟
+    const maxAttempts = 60; 
 
     while (attempts < maxAttempts) {
       const statusRes = await this.fetchWithAuth(`https://mineru.net/api/v4/extract-results/batch/${batchId}`);
-      if (!statusRes.ok) throw new Error(`查询状态失败 (HTTP ${statusRes.status})`);
+      if (!statusRes.ok) throw new Error(`Status check failed (HTTP ${statusRes.status})`);
       
       const statusData = await statusRes.json();
       const result = statusData.data.extract_result[0];
@@ -71,20 +73,20 @@ export class MineruService {
         taskResult = result;
         break;
       } else if (result.state === 'failed') {
-        throw new Error(result.err_msg || 'MinerU 解析失败，请检查文件格式');
+        throw new Error(result.err_msg || 'MinerU parsing failed');
       }
       
       attempts++;
       await new Promise(r => setTimeout(r, 3000));
     }
 
-    if (!taskResult) throw new Error('任务超时，MinerU 处理时间过长');
+    if (!taskResult) throw new Error('Task timeout');
 
-    // 4. 下载并解压结果
+    // 4. Download and unzip
     console.debug(`[MinerU] Fetching result ZIP...`);
     const zipUrl = taskResult.full_zip_url;
     const zipBlob = await fetch(zipUrl).then(r => {
-      if (!r.ok) throw new Error('结果包下载失败');
+      if (!r.ok) throw new Error('Result download failed');
       return r.blob();
     });
 

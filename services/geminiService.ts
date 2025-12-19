@@ -32,7 +32,7 @@ export class GeminiService {
     `;
 
     const response = await this.ai.models.generateContent({
-      model: "gemini-3-pro-preview",
+      model: "gemini-3-flash-preview",
       contents: prompt,
       config: {
         systemInstruction,
@@ -47,7 +47,7 @@ export class GeminiService {
   async analyzeContent(content: string, contentType: string, lang: Language = 'zh'): Promise<AnalysisResult> {
     const languageName = lang === 'zh' ? '简体中文' : 'English';
     const response = await this.ai.models.generateContent({
-      model: "gemini-3-pro-preview",
+      model: "gemini-3-flash-preview",
       contents: `分析以下${contentType}内容并返回可视化布局 JSON。请使用 ${languageName} 生成内容: ${content}`,
       config: {
         responseMimeType: "application/json",
