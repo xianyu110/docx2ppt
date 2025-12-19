@@ -1,0 +1,5 @@
+{
+  "name": "智能内容可视化平台",
+  "description": "基于 Gemini AI 和 MinerU 的多模态内容分析与可视化工具，将 PDF 论文直接转化为现代网页。",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,67 @@
+
+export type Language = 'zh' | 'en';
+
+export const translations = {
+  zh: {
+    navTitle: 'VISUAL INSIGHT V2',
+    heroTitle: '精准提取',
+    heroTitleHighlight: '论文原始图表',
+    heroSubtitle: '不再依赖 AI 臆造图表。集成 MinerU VLM 引擎，直接从 PDF 文档中“扣出”科研原图，并由 Gemini 3 Pro 重新编排可视化布局。',
+    uploadBtn: '选择 PDF 文件',
+    uploadHint: '支持学术论文、技术报告、复杂文档',
+    loadingStep1: '第1/2步：MinerU 正在深度解析 PDF 并提取原始图表...',
+    loadingStep2: '第2/2步：Gemini 3 Pro 正在重构可视化网页布局...',
+    loadingGeneral: '正在与 MinerU 解析服务和 Gemini AI 同步数据...',
+    errorTitle: '处理过程中发生了错误',
+    errorFetchTitle: '网络请求受限 (Failed to fetch)',
+    errorFetchDetails: '这通常是由以下原因引起的：\n1. 浏览器跨域策略 (CORS) 拦截了对 MinerU 域名的直接请求。\n2. MinerU API 节点当前不可用。\n3. API Token 已过期或未授权当前域名。\n\n建议：如果您在本地开发，请使用 CORS 代理或在服务器端调用。',
+    errorShowDetails: '查看技术详情',
+    errorHideDetails: '隐藏技术详情',
+    backBtn: '重新上传',
+    summaryHeader: '内容摘要 / Executive Summary',
+    analysisReport: 'Analysis Result • 内容解析报告',
+    footerDesc: '基于 MinerU 与 Gemini AI 的新一代论文解析引擎，将复杂学术成果转化为直观、现代、极具美感的可视化体验。',
+    createdBy: 'CREATED BY',
+    author: '智能可视化解析专家',
+    rights: '版权所有',
+    privacy: '隐私政策',
+    terms: '服务条款',
+    // SaaS 扩展功能
+    exportPdf: '导出 PDF',
+    exportPpt: '导出 PPTX',
+    shareBtn: '分享链接',
+    styleMode: '风格模式',
+    aiEdit: 'AI 优化'
+  },
+  en: {
+    navTitle: 'VISUAL INSIGHT V2',
+    heroTitle: 'Precisely Extract',
+    heroTitleHighlight: 'Original Paper Figures',
+    heroSubtitle: 'Stop relying on AI-hallucinated diagrams. Integrated with MinerU VLM engine to extract original research figures directly from PDFs, re-layouted beautifully by Gemini 3 Pro.',
+    uploadBtn: 'Select PDF File',
+    uploadHint: 'Supports academic papers, technical reports, and complex documents',
+    loadingStep1: 'Step 1/2: MinerU is deep-parsing PDF and extracting figures...',
+    loadingStep2: 'Step 2/2: Gemini 3 Pro is reconstructing visual layout...',
+    loadingGeneral: 'Syncing data with MinerU service and Gemini AI...',
+    errorTitle: 'An error occurred during processing',
+    errorFetchTitle: 'Network Request Restricted (Failed to fetch)',
+    errorFetchDetails: 'This is usually caused by:\n1. Browser CORS policy blocking requests to MinerU.\n2. MinerU API nodes currently unavailable.\n3. API Token expired or unauthorized for this domain.\n\nRecommendation: Use a CORS proxy if developing locally.',
+    errorShowDetails: 'Show Technical Details',
+    errorHideDetails: 'Hide Technical Details',
+    backBtn: 'Upload Again',
+    summaryHeader: 'Executive Summary',
+    analysisReport: 'Analysis Result • Report',
+    footerDesc: 'Next-gen paper analysis engine based on MinerU and Gemini AI, transforming complex research into intuitive, modern, and aesthetic visual experiences.',
+    createdBy: 'CREATED BY',
+    author: 'AI Visual Analytics Expert',
+    rights: 'ALL RIGHTS RESERVED',
+    privacy: 'PRIVACY POLICY',
+    terms: 'TERMS OF SERVICE',
+    // SaaS Extensions
+    exportPdf: 'Export PDF',
+    exportPpt: 'Export PPTX',
+    shareBtn: 'Share Link',
+    styleMode: 'Style',
+    aiEdit: 'AI Refine'
+  }
+};
