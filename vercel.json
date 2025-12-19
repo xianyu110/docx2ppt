@@ -3,6 +3,10 @@
   "version": 2,
   "rewrites": [
     {
+      "source": "/mineru-proxy/:path*",
+      "destination": "https://mineru.net/api/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

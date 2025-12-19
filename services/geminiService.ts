@@ -31,8 +31,9 @@ export class GeminiService {
       请生成符合 AnalysisResult 接口的 JSON。
     `;
 
+    // Upgrade to gemini-3-pro-preview for complex STEM analysis tasks
     const response = await this.ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-3-pro-preview",
       contents: prompt,
       config: {
         systemInstruction,
@@ -41,13 +42,15 @@ export class GeminiService {
       }
     });
 
+    // Accessing .text as a property as per SDK guidelines
     return JSON.parse(response.text || '{}');
   }
 
   async analyzeContent(content: string, contentType: string, lang: Language = 'zh'): Promise<AnalysisResult> {
     const languageName = lang === 'zh' ? '简体中文' : 'English';
+    // Upgrade to gemini-3-pro-preview for complex text analysis tasks
     const response = await this.ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-3-pro-preview",
       contents: `分析以下${contentType}内容并返回可视化布局 JSON。请使用 ${languageName} 生成内容: ${content}`,
       config: {
         responseMimeType: "application/json",
